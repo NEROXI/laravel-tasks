@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\ReviewService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -27,8 +28,8 @@ class ApiController extends Controller
                     md5($image->getClientOriginalName().(new \DateTime())->getTimestamp()),
                     $extension
                 ]);
-                $image->storeAs('public',$filename);
-                $validatedData['image'] = $filename;
+                $image->storeAs('public','images/'.$filename);
+                $validatedData['image'] = Storage::url('images/'.$filename);
             }
 
             $review = $reviewService->createReview($validatedData);
@@ -88,8 +89,8 @@ class ApiController extends Controller
                     md5($image->getClientOriginalName().(new \DateTime())->getTimestamp()),
                     $extension
                 ]);
-                $image->storeAs('public',$filename);
-                $validatedData['image'] = $filename;
+                $image->storeAs('public','images/'.$filename);
+                $validatedData['image'] = Storage::url('images/'.$filename);
             }
 
             $review = $reviewService->updateReview($validatedData);
@@ -111,10 +112,40 @@ class ApiController extends Controller
     {
         try {
             $validationData = $request->validate([
-                'limit' => ['nullable', 'integer', 'min:1']
+                'from' => ['nullable', 'integer', 'min:1'],
+                'to' => ['nullable', 'integer', 'min:1'],
             ]);
 
-            if($reviews = $reviewService->getReviews($request->query->has('limit') ? $validationData['limit'] : false)) {
+            $range = false;
+            if($request->query->has('from') && $request->query->has('to')) {
+                $range['from'] = $request->query->get('from');
+                $range['to'] = $request->query->get('to');
+            }
+
+            if($reviews = $reviewService->getReviews($range)) {
+                return response()->json([
+                    'status' => 'success',
+                    'data' => $reviews
+                ], 201);
+            }
+        }
+        catch (ValidationException $e) {
+            $errors = $e->errors();
+            return response()->json([
+                'status' => 'error',
+                'errors' => $errors
+            ], 422);
+        }
+    }
+
+    public function getByPage(Request $request, ReviewService $reviewService)
+    {
+        try {
+            $validationData = $request->validate([
+                'page' => ['required', 'integer', 'min:1']
+            ]);
+
+            if($reviews = $reviewService->getReviewsPerPage($validationData['page'])) {
                 return response()->json([
                     'status' => 'success',
                     'data' => $reviews

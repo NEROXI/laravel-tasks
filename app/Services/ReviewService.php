@@ -33,13 +33,36 @@ class ReviewService
 
     public function getReviewById($id)
     {
-        return Review::find($id);
+        $review =  Review::find($id);
+        $review->load('category');
+        return $review;
     }
 
-    public function getReviews($limit = false)
+    public function getReviews($range = false)
     {
-        $reviews = $limit ? Review::take($limit)->get() : Review::all();
+        if ($range && is_array($range) && count($range) === 2) {
+            $from = $range['from'];
+            $to = $range['to'];
 
+            $reviews = Review::skip($from - 1)->take($to)->get();
+            $reviews->load('category');
+
+            return $reviews;
+        }
+        else {
+            $reviews = Review::all();
+
+            return $reviews;
+        }
+    }
+
+    public function getReviewsPerPage($page)
+    {
+        $perPage = 10;
+        $skip = ($page - 1) * $perPage;
+
+        $reviews = Review::skip($skip)->take($perPage)->get();
+        $reviews->load('category');
         return $reviews;
     }
 

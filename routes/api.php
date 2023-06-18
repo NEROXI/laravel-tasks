@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware(\App\Http\Middleware\CheckPostMethod::class)->any('/review/create', 'App\Http\Controllers\ApiController@create');
 Route::middleware(\App\Http\Middleware\CheckPostMethod::class)->any('/review/update', 'App\Http\Controllers\ApiController@update');
 Route::middleware(\App\Http\Middleware\CheckPostMethod::class)->any('/category/create', 'App\Http\Controllers\ApiController@createCategory');
-Route::middleware(\App\Http\Middleware\CheckPostMethod::class)->any('/review/get', 'App\Http\Controllers\ApiController@get');
+Route::middleware(\App\Http\Middleware\CheckGetMethod::class)->any('/review/get', 'App\Http\Controllers\ApiController@get');
 Route::middleware(\App\Http\Middleware\CheckGetMethod::class)->any('/review/getAll', 'App\Http\Controllers\ApiController@getAll');
+Route::middleware(\App\Http\Middleware\CheckGetMethod::class)->any('/review/getByPage', 'App\Http\Controllers\ApiController@getByPage');
 Route::middleware(\App\Http\Middleware\CheckGetMethod::class)->any('/review/getCount', 'App\Http\Controllers\ApiController@getCount');

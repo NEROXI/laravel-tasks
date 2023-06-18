@@ -9,6 +9,7 @@
         <!-- Fonts -->
         <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+        @vite(['resources/js/app.js'])
     </head>
     <body class="antialiased">
     <div class="antialiased bg-gray-50 dark:bg-gray-900">
@@ -19,4 +20,5 @@
         @yield('content')
     </div>
     </body>
+
 </html>
