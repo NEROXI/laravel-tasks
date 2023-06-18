@@ -132,10 +132,6 @@ class ApiController extends Controller
     public function getCount(Request $request, ReviewService $reviewService)
     {
         try {
-            $validationData = $request->validate([
-                'method' => ['required', 'string', 'in:GET']
-            ]);
-
             if($reviewsCount = $reviewService->getReviewsCount()) {
                 return response()->json([
                     'status' => 'success',
