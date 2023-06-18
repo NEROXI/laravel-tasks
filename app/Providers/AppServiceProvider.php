@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\ImageService;
+use App\Services\ReviewService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(ImageService::class, function () {return new ImageService();});
+        $this->app->bind(ReviewService::class, function () {return new ReviewService();});
     }
 
     /**
