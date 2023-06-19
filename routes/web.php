@@ -14,4 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'App\Http\Controllers\DefaultController@list')->name('homepage');
+Route::any('/review/edit/{id}', 'App\Http\Controllers\DefaultController@edit')->name('edit');
+Route::any('/review/create', 'App\Http\Controllers\DefaultController@create')->name('create');
 Route::get('/docs', 'App\Http\Controllers\DefaultController@docs')->name('docs');

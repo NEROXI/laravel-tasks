@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import axios from 'axios';
 import moment from "moment";
+import $ from 'jquery'
 
 const app = createApp({
     data() {
@@ -22,7 +23,7 @@ const app = createApp({
             if(page == this.page) return;
             const resultsPerPage = 10;
             const start = (page - 1) * resultsPerPage + 1;
-            const end = page * resultsPerPage - 1;
+            const end = page * resultsPerPage;
 
             axios.get(`/api/review/getAll?from=${start}&to=${end}`)
                 .then(response => {
@@ -55,14 +56,53 @@ const app = createApp({
                     console.error(error);
                 });
         },
+        submitEditForm(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            axios.post(event.target.action, formData)
+                .then(response => {
+                    if(response.data.status == 'success') {
+                        showAlert('success', 'Review successfully updated!');
+                    }
+                    else {
+                        const errorMessages = Object.values(response.data.errors).flat().join(' ');
+                        showAlert('error', errorMessages);
+                    }
+                })
+                .catch(error => {
+                    const errorMessages = Object.values(error.response.data.errors).flat().join(' ');
+                    showAlert('error', errorMessages);
+                });
+        },
+        submitCreateForm(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            axios.post(event.target.action, formData)
+                .then(response => {
+                    if(response.data.status == 'success') {
+                        showAlert('success', 'Review successfully created!');
+                    }
+                    else {
+                        const errorMessages = Object.values(response.data.errors).flat().join(' ');
+                        showAlert('error', errorMessages);
+                    }
+                })
+                .catch(error => {
+                    const errorMessages = Object.values(error.response.data.errors).flat().join(' ');
+                    showAlert('error', errorMessages);
+                });
+        },
         goToPage(page) {
             this.fetchReviews(page);
         },
         goToPreviousPage() {
-            if(this.page == 1) return;
+            if(this.currentPage == 1) return;
             this.fetchReviews(this.currentPage - 1);
         },
         goToNextPage() {
+            if(this.to >= this.totalCount) return;
             this.fetchReviews(this.currentPage + 1);
         },
         formatDate(dateTime) {
@@ -72,4 +112,19 @@ const app = createApp({
     }
 });
 
+const showAlert = (type, text) => {
+    const alertBlock = $(`#${type}-alert`);
+    alertBlock.removeClass('hidden');
+    alertBlock.removeClass('opacity-0');
+    alertBlock.addClass('opacity-100');
+    alertBlock.find('.alert-text').text(text);
+    setTimeout(() => {
+        alertBlock.removeClass('opacity-100');
+        alertBlock.addClass('opacity-0');
+        alertBlock.addClass('hidden');
+    }, 5000);
+}
+
 app.mount('#app');
+
+

@@ -14,11 +14,14 @@ export default defineConfig({
             jquery: path.resolve(__dirname, 'node_modules/jquery/dist/jquery.js'),
             vue: path.resolve(__dirname, 'node_modules/vue/dist/vue.esm-bundler.js'),
             moment: path.resolve(__dirname, 'node_modules/moment/moment.js'),
+            flowbite: path.resolve(__dirname, 'node_modules/flowbite/dist/flowbite.js')
         },
     },
     global: {
         jquery: 'jQuery',
+        '$': 'jQuery',
         vue: 'Vue',
         moment: 'moment',
+        flowbite: 'flowbite'
     },
 });

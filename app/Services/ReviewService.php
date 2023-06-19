@@ -31,6 +31,11 @@ class ReviewService
         return $category;
     }
 
+    public function getAllCategories()
+    {
+        return Category::all();
+    }
+
     public function getReviewById($id)
     {
         $review =  Review::find($id);
@@ -44,7 +49,7 @@ class ReviewService
             $from = $range['from'];
             $to = $range['to'];
 
-            $reviews = Review::skip($from - 1)->take($to)->get();
+            $reviews = Review::skip($from - 1)->take($to - $from + 1)->get();
             $reviews->load('category');
 
             return $reviews;
